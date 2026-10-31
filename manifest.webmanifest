@@ -1,0 +1,9 @@
+{
+  "name": "STATUS HD PRO",
+  "short_name": "STATUS HD",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#090d12",
+  "theme_color": "#090d12",
+  "description": "Penyedia gambar dan video untuk WhatsApp Status"
+}

@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#090d12">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="STATUS HD PRO">
+<link rel="manifest" href="manifest.webmanifest">
+<title>STATUS HD PRO</title>
+<style>
+:root{color-scheme:dark;--bg:#090d12;--panel:#121a24;--panel2:#172230;--line:#263646;--muted:#9aabba;--mint:#77e0b4;--white:#f4f8fb}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -18%,#203b3c 0,transparent 52%),var(--bg);color:var(--white);font:16px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+main{max-width:540px;margin:auto;padding:calc(18px + env(safe-area-inset-top)) 17px calc(32px + env(safe-area-inset-bottom))}
+header{display:flex;justify-content:space-between;align-items:center;margin:4px 0 29px}.brand{font-size:14px;font-weight:900;letter-spacing:.16em}.brand span{color:var(--mint)}.tag{font-size:10px;letter-spacing:.1em;color:var(--mint);border:1px solid #315e50;border-radius:30px;padding:7px 10px}
+h1{font-size:34px;line-height:1.04;letter-spacing:-.045em;margin:0 0 10px}h1 span{color:var(--mint)}.lead{font-size:14px;line-height:1.55;color:var(--muted);margin:0 0 23px}
+.card{background:linear-gradient(150deg,#151f2b,#101720);border:1px solid var(--line);border-radius:22px;padding:17px;margin:15px 0}
+.drop{display:flex;min-height:160px;flex-direction:column;align-items:center;justify-content:center;text-align:center;border:1px dashed #526a78;border-radius:17px;background:#0d141d;padding:18px;cursor:pointer}.plus{height:46px;width:46px;border-radius:15px;background:#1b3932;color:var(--mint);display:grid;place-items:center;font-size:28px;margin-bottom:12px}.drop b{font-size:15px}.drop small{font-size:12px;color:var(--muted);margin-top:7px}
+input[type=file]{display:none}.preview{display:none;margin-top:14px}.preview img,.preview video{display:block;width:100%;max-height:390px;object-fit:contain;border-radius:13px;background:#05080b}.meta{display:flex;justify-content:space-between;gap:8px;color:var(--muted);font-size:11px;margin-top:8px}
+label.field{display:block;font-size:11px;letter-spacing:.1em;color:var(--muted);margin:15px 0 8px}.seg{display:flex;gap:7px;flex-wrap:wrap}.seg button{flex:1;min-width:70px;background:#0c131c;border:1px solid var(--line);color:var(--muted);padding:11px 8px;border-radius:11px;font-size:12px}.seg button.active{background:#19372f;border-color:#4b9a7a;color:var(--mint)}
+button.action{width:100%;border:0;border-radius:14px;padding:15px;font-weight:800;font-size:14px;margin-top:13px;background:var(--mint);color:#07140f}button.secondary{background:#202d3a;color:var(--white);border:1px solid #35495a}button:disabled{opacity:.38}
+.note{font-size:11px;line-height:1.55;color:var(--muted);margin:12px 2px 0}.status{font-size:12px;color:var(--mint);min-height:18px;margin-top:11px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.stat{background:#0c141d;border:1px solid var(--line);border-radius:13px;padding:12px}.stat b{display:block;font-size:14px}.stat small{color:var(--muted);font-size:10px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px}.row strong{font-size:14px}.row span{font-size:11px;color:var(--muted)}
+footer{text-align:center;color:#687989;font-size:10px;margin-top:24px}
+</style>
+</head>
+<body>
+<main>
+<header><div class="brand">STATUS <span>HD PRO</span></div><div class="tag">IPHONE PWA</div></header>
+<h1>Jadikan status<br><span>lebih jelas.</span></h1>
+<p class="lead">Sediakan gambar untuk WhatsApp Status. Pemprosesan imej dibuat pada iPhone anda; video asal dikekalkan tanpa encode semula.</p>
+
+<section class="card">
+  <label class="drop" for="picker"><div class="plus">+</div><b>Pilih gambar atau video</b><small>Daripada Photos · JPG, PNG, HEIC*, MOV, MP4</small></label>
+  <input id="picker" type="file" accept="image/*,video/*">
+  <div class="preview" id="preview">
+    <img id="img" alt="Pratonton media">
+    <video id="vid" controls playsinline></video>
+    <div class="meta"><span id="name"></span><span id="size"></span></div>
+  </div>
+  <div id="imageOptions" hidden>
+    <label class="field">MOD GAMBAR</label>
+    <div class="seg" id="photoModes">
+      <button data-mode="fit" class="active">Fit 9:16</button>
+      <button data-mode="fill">Fill 9:16</button>
+      <button data-mode="original">Original</button>
+    </div>
+    <label class="field">KUALITI JPEG</label>
+    <div class="seg" id="quality">
+      <button data-q="0.92">92%</button><button data-q="0.96" class="active">96%</button><button data-q="1">100%</button>
+    </div>
+  </div>
+  <button class="action" id="process" disabled>Sediakan media</button>
+  <button class="action secondary" id="share" disabled>Kongsi ke WhatsApp</button>
+  <div class="status" id="status" aria-live="polite"></div>
+  <p class="note">Fit mengekalkan keseluruhan gambar dengan ruang latar. Fill memenuhi skrin 9:16 dan mungkin memotong tepi. 100% ialah tetapan kualiti JPEG encoder, bukan jaminan bebas kehilangan atau bebas compression WhatsApp.</p>
+</section>
+
+<section class="card">
+ <div class="row"><strong>Video · Original pass-through</strong><span>Tiada re-encode</span></div>
+ <p class="note">Buat masa ini video dikongsi menggunakan fail asal supaya app tidak menambah kehilangan kualiti. Tetapan 4K/60 FPS dan bitrate hanya boleh diterapkan selepas enjin video iOS/browser yang serasi dibina; app ini tidak akan mendakwa ia sudah encode 4K/60 FPS.</p>
+</section>
+<section class="card">
+ <div style="font-weight:750;margin-bottom:12px">Ringkasan pemprosesan</div>
+ <div class="grid">
+  <div class="stat"><b>1080 × 1920</b><small>Output gambar Status</small></div>
+  <div class="stat"><b>9:16</b><small>Nisbah menegak</small></div>
+  <div class="stat"><b>On-device</b><small>Gambar tidak dihantar ke server</small></div>
+  <div class="stat"><b>Original</b><small>Video tidak diubah</small></div>
+ </div>
+</section>
+<footer>STATUS HD PRO · Versi PWA prototaip</footer>
+</main>
+<script>
+const $=id=>document.getElementById(id), picker=$('picker'), preview=$('preview'), img=$('img'), vid=$('vid');
+let sourceFile=null, resultFile=null, kind=null, mode='fit', quality=.96, url=null;
+const size=n=>n<1048576?Math.round(n/1024)+' KB':(n/1048576).toFixed(2)+' MB';
+function setStatus(t){$('status').textContent=t}
+picker.addEventListener('change',()=>{
+ sourceFile=picker.files?.[0]||null;resultFile=null;$('share').disabled=true;$('process').disabled=!sourceFile;
+ if(!sourceFile)return;
+ kind=sourceFile.type.startsWith('image/')?'image':sourceFile.type.startsWith('video/')?'video':'unknown';
+ if(url)URL.revokeObjectURL(url);url=URL.createObjectURL(sourceFile);
+ preview.style.display='block';$('name').textContent=sourceFile.name;$('size').textContent=size(sourceFile.size);
+ img.style.display=kind==='image'?'block':'none';vid.style.display=kind==='video'?'block':'none';
+ $('imageOptions').hidden=kind!=='image';
+ if(kind==='image'){img.src=url;setStatus('Gambar dipilih. Pilih mod dan tekan Sediakan media.')}
+ else if(kind==='video'){vid.src=url;setStatus('Video dipilih. Fail asal akan dikekalkan.')}
+ else{setStatus('Jenis fail tidak disokong.');$('process').disabled=true}
+});
+$('photoModes').addEventListener('click',e=>{const b=e.target.closest('button[data-mode]');if(!b)return;mode=b.dataset.mode;[...$('photoModes').children].forEach(x=>x.classList.toggle('active',x===b))});
+$('quality').addEventListener('click',e=>{const b=e.target.closest('button[data-q]');if(!b)return;quality=Number(b.dataset.q);[...$('quality').children].forEach(x=>x.classList.toggle('active',x===b))});
+$('process').addEventListener('click',async()=>{
+ if(!sourceFile)return;$('process').disabled=true;setStatus('Sedang menyediakan media…');
+ try{
+  if(kind==='video'){resultFile=sourceFile;setStatus('Video sedia. Fail asal dikekalkan tanpa re-encode.')}
+  else{
+   let bitmap;
+   try{bitmap=await createImageBitmap(sourceFile)}catch{throw new Error('iPhone tidak dapat membaca format ini. Cuba eksport gambar sebagai JPEG daripada Photos.')}
+   let canvas=document.createElement('canvas'),ctx=canvas.getContext('2d');
+   if(mode==='original'){canvas.width=bitmap.width;canvas.height=bitmap.height;ctx.drawImage(bitmap,0,0)}
+   else{
+    const W=1080,H=1920;canvas.width=W;canvas.height=H;
+    if(mode==='fit'){
+      ctx.fillStyle='#080d12';ctx.fillRect(0,0,W,H);
+      const s=Math.min(W/bitmap.width,H/bitmap.height),w=bitmap.width*s,h=bitmap.height*s;
+      ctx.drawImage(bitmap,(W-w)/2,(H-h)/2,w,h);
+    }else{
+      const s=Math.max(W/bitmap.width,H/bitmap.height),w=bitmap.width*s,h=bitmap.height*s;
+      ctx.drawImage(bitmap,(W-w)/2,(H-h)/2,w,h);
+    }
+   }
+   resultFile=await new Promise(resolve=>canvas.toBlob(resolve,'image/jpeg',quality));
+   if(!resultFile)throw new Error('Gagal menghasilkan JPEG. Cuba fail lain.');
+   img.src=URL.createObjectURL(resultFile);bitmap.close();
+   setStatus(`Gambar siap · ${canvas.width} × ${canvas.height} · ${size(resultFile.size)}`);
+  }
+  $('share').disabled=false;
+ }catch(err){setStatus(err.message||'Ralat semasa memproses media.')}
+ finally{$('process').disabled=false}
+});
+$('share').addEventListener('click',async()=>{
+ if(!resultFile)return;
+ const ext=kind==='video'?(sourceFile.name.split('.').pop()||'mp4'):'jpg';
+ const f=new File([resultFile],kind==='video'?sourceFile.name:`status-hd.${ext}`,{type:resultFile.type||sourceFile.type});
+ try{
+  if(navigator.canShare?.({files:[f]})){await navigator.share({files:[f],title:'STATUS HD PRO'});setStatus('Menu Share dibuka. Pilih WhatsApp jika tersedia, kemudian My Status.')}
+  else{const a=document.createElement('a');a.href=URL.createObjectURL(resultFile);a.download=f.name;a.click();setStatus('Fail dimuat turun. Buka Photos/Files dan kongsi ke WhatsApp.')}
+ }catch(err){if(err.name!=='AbortError')setStatus('Share tidak berjaya. Cuba simpan fail dan kongsi melalui Photos.')}
+});
+if('serviceWorker' in navigator && location.protocol.startsWith('http'))navigator.serviceWorker.register('./sw.js').catch(()=>{});
+</script>
+</body></html>
